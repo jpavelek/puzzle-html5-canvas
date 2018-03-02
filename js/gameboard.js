@@ -37,7 +37,6 @@ loadImages = function () {
 }
 
 drawBackgroud = function() {
-    console.log("This is ", this.window.innerHeight);
     lBackground.add(images[0]);
     images[1].y(dimensions.height-dimensions.trayHeight);
     lBackground.add(images[1]);
@@ -149,7 +148,7 @@ loadImages()
     drawBackgroud();
 });
 
-window.onresize = function(event) {
+function scaleScene() {
     if (stage) {
         var w = window.innerWidth;
         var h = window.innerHeight;
@@ -164,4 +163,12 @@ window.onresize = function(event) {
             stage.draw();
         }
     }
+}
+
+window.onload = function(event) {
+    scaleScene();
+}
+
+window.onresize = function(event) {
+    scaleScene();
 };
