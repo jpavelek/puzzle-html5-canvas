@@ -148,3 +148,20 @@ loadImages()
     initStage();
     drawBackgroud();
 });
+
+window.onresize = function(event) {
+    if (stage) {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        if ((w >= dimensions.width) && (h >= dimensions.height)) {
+            //We are good, no need to scale anything up
+        } else {
+            var sw = w/dimensions.width;
+            var sh = h/dimensions.height;
+            var newscale = (sw > sh) ? sh : sw; 
+            stage.scaleX(newscale);
+            stage.scaleY(newscale);
+            stage.draw();
+        }
+    }
+};
