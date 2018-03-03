@@ -4,19 +4,24 @@ dimensions = {
     trayHeight : 150
 }
 images = new Array();
+var stage = {};
 
 loadImages = function () {
     return new Promise(function(resolve, reject) {
         var sources = [
-            "./images/puppy_board.png",
-            "./images/tray.png",
+            "./images/puppy_board.png",     // #0
+            "./images/tray.png",            // #1
             "./images/puppy_head.png",
             "./images/puppy_ball.png",
             "./images/puppy_legs.png",
             "./images/puppy_torso.png",
             "./images/puppy_back_leg.png",
             "./images/puppy_tail.png",
-            "./images/puppy_leg.png"
+            "./images/puppy_leg.png",
+            "./images/baloon_blue.png",     // #9
+            "./images/baloon_red.png",      // #10
+            "./images/baloon_yellow.png",   // #11
+            "./images/baloon_green.png"     // #12
         ];
         var loadedImages = 0;
         for (var s in sources) {
@@ -105,6 +110,7 @@ addPiece = function(index, ptx, pty, ptw, pth, pbx, pby, pz) {
             score++;
             if (score === endgame) {
                 play_multi_sound("applause");
+                popBaloons(15);
                 //TODO implement the whole popBaloons(15);
             }
         } else {
@@ -142,12 +148,6 @@ initStage = function() {
     lPieces.draw();
 }
 
-loadImages()
-.then(function(result) {
-    initStage();
-    drawBackgroud();
-});
-
 function scaleScene() {
     if (stage) {
         var w = window.innerWidth;
@@ -165,8 +165,42 @@ function scaleScene() {
     }
 }
 
+function popBaloons(nr_baloons) {
+    images[1].destroy();
+    lBackground.draw();
+    var lBaloons = new Konva.Layer();
+    stage.add(lBaloons);
+    for (i = 0; i < nr_baloons; i++) {
+        setTimeout(function() {
+            var bi = Math.floor(Math.random() * 4) + 9; // Index to the sources/images start at #9
+            var newBaloon = images[bi].clone({
+                x: 20 + Math.floor(Math.random()*(dimensions.width-80)),
+                y: dimensions.height
+            });
+            lBaloons.add(newBaloon);
+            newBaloon.on("mousedown", function() { 
+                play_multi_sound("pop"); 
+                this.hide();
+                this.destroy();
+            });
+            var newGoUpAnim = new Konva.Tween({
+                node: newBaloon,
+                y:-200,
+                duration: 10.0
+            });
+            newGoUpAnim.play();
+        }, Math.floor(Math.random()*7000) + 1);
+    }
+
+}
+
 window.onload = function(event) {
-    scaleScene();
+    loadImages()
+    .then(function(result) {
+        initStage();
+        drawBackgroud();
+        scaleScene();
+    });
 }
 
 window.onresize = function(event) {
